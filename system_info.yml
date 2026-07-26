@@ -1,0 +1,37 @@
+---
+- name: Collect System Information
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Create report directory
+      file:
+        path: /home/ubuntu/system-report
+        state: directory
+
+    - name: Get hostname
+      command: hostname
+      register: hostname
+
+    - name: Save hostname
+      copy:
+        content: "{{ hostname.stdout }}"
+        dest: /home/ubuntu/system-report/hostname.txt
+
+    - name: Get disk usage
+      command: df -h
+      register: disk
+
+    - name: Save disk usage
+      copy:
+        content: "{{ disk.stdout }}"
+        dest: /home/ubuntu/system-report/disk.txt
+
+    - name: Get memory usage
+      command: free -h
+      register: memory
+
+    - name: Save memory usage
+      copy:
+        content: "{{ memory.stdout }}"
+        dest: /home/ubuntu/system-report/memory.txt
